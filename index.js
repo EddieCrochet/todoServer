@@ -72,7 +72,7 @@ app.post("/items", function(req, res){
     console.log("POST /items", req.body);
 
     let dataIn = req.body;
-    let newID = nextId; // need to find a way to come up with a new ID
+    let newID = nextId;
     nextId++;
 
     // if they sent an id - override it
@@ -97,21 +97,45 @@ app.post("/items", function(req, res){
 })
 
 // PUT items/:id body{}
-// updat item with new info
+// update item with new info
 // body is the info you want to update item with
-app.put("/items/:id", function(req, res){
-
-})
-
 //if id is included in body, 
 // replace it with the id that is passed in on the path param
-
 // PUT /items
-// make sure the id and the info you want to update the itme with are both in body
+// make sure the id and the info you want to update the item with are both in body
+app.put("/items/:id", function(req, res){
+    console.log("PUT /items/:id", req.params);
+
+    let dataIn = req.body;
+
+    //override their id with our correct one if they entered an id for the item
+    dataIn.id = req.params.id;
+
+    // if they send anything other than true for done flag
+    // we mark item as not done
+    if(dataIn.done != true) {
+        dataIn.done = false;
+    }
+
+    // reset all values of edited object
+    db[dataIn.id].label = dataIn.label;
+    db[dataIn.id].done = dataIn.done;
+    db[dataIn.id].dueDate = dataIn.dueDate;
+    db[dataIn.id].priority = dataIn.priority;
+
+    res.sendStatus(204);
+})
 
 //DELETE
 app.delete("/items/:id", function(req, res){
-    
+    let id = req.params.id;
+
+    let found = null;
+    found = db.find(item => item.id == id);
+    let delIndex = db.indexOf(found);
+    // remove from the index we found the number from the search url params
+    db.splice(delIndex, 1);
+    res.sendStatus(204);
 })
 
 // start application
