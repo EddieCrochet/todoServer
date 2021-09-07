@@ -10,7 +10,7 @@ app.use(express.json());
 // define port this app listens on
 const PORT = 4000;
 
-let nextId = 2;
+let nextId = 3;
 
 let db = [{
     "id": 1,
@@ -19,7 +19,7 @@ let db = [{
     "done": false,
     "priority": "high"
 },{
-    "id": 1,
+    "id": 2,
     "label": "buy vodka",
     "dueDate": "yesterday",
     "done": false,
@@ -35,29 +35,35 @@ let db = [{
  * DELETE /items/:id
  */
 
-//returns some banner infor for a sanity check
+//returns some banner info for a sanity check
 app.get("/", function(req, res){
-    res.json("Best todo App");
+    res.send("Here lies my sanity check for the root of the server - Best todo App");
 })
 
 // GET /items
-//return basic infor for all the items
+//return basic info for all the items
 app.get("/items", function(req, res){
     console.log("GET /items");
   
-    let simplifiedDb = db.map(function(item, idx){
+    let simplifiedDb = db.map(function(item, index){
         // use map() higher order to convert every item in arr to simpler copy
-        // that only has id, label, ad doneStatus
+        // that only has id, label, and doneStatus
+        return ({"id": item.id, "label": item.label, "done": item.done});
     })
-    res.json(db);
+    res.json(simplifiedDb);
 })
 
 // GET /item/:id
-// return entire item mathing id
+// return entire item matching id
 app.get("/items/:id", function(req, res){
-    console.log("GET /items")
-    // want to get one of the objects from array reeturn it
+    console.log("GET /items/:id", req.params);
+    // want to get one of the objects from array return it
     let theID = req.params.id;
+    console.log(theID);
+    let found = null;
+    found = db.find(item => item.id == theID);
+    console.log(found);
+    res.json(found);
 })
 
 //POST /items    body{label required, extra attributes stored with item}
