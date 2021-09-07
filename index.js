@@ -59,7 +59,6 @@ app.get("/items/:id", function(req, res){
     console.log("GET /items/:id", req.params);
     // want to get one of the objects from array return it
     let theID = req.params.id;
-    console.log(theID);
     let found = null;
     found = db.find(item => item.id == theID);
     console.log(found);
@@ -70,20 +69,20 @@ app.get("/items/:id", function(req, res){
 //add new item to list
 // provide info about the item you wanna add
 app.post("/items", function(req, res){
-    console.log("POST /items", req, body);
+    console.log("POST /items", req.body);
 
     let dataIn = req.body;
-    let newID; // need to find a way to come up with a new ID
+    let newID = nextId; // need to find a way to come up with a new ID
     nextId++;
 
     // if they sent an id - override it
     dataIn.id = newID;
 
-    //this checks iflabel was provided
+    //this checks if label was provided
     if(!dataIn.label){
         //this code will execute if label is falsey
         // have to decide what to do
-        res.statusCode(400);
+        res.statusCode(400).send("label required");
         return
     }
 
